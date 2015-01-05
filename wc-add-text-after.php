@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Add text after "Add To Cart" button
  * Plugin URI: http://www.rayflores.com/plugins/wc-text-after-atc-button 
@@ -71,35 +70,37 @@ function validate_setting($plugin_options) {
 function section_cb() {
 }
 
-// zip code box
+// $text_to_add_1 box
 function add_text_area_1_setting() {  
 	$options = get_option('plugin_options');  
 	echo "<textarea name='plugin_options[add_text_area_1]' value='{$options['add_text_area_1']}' cols='50' rows='15'>" . $options['add_text_area_1'] . "</textarea>";
 }
+
+// $text_to_add_2 box
 function add_text_area_2_setting() {  
 	$options = get_option('plugin_options');  
 	echo "<textarea name='plugin_options[add_text_area_2]' value='{$options['add_text_area_2']}' cols='50' rows='15'>" . $options['add_text_area_2'] . "</textarea>";
 }
- 
+
+// show text after add-to-cart-button @priority 35
+add_action( 'woocommerce_single_product_summary', 'wc_add_text_after_atc_button', 35 ); 
  function wc_add_text_after_atc_button(){
  global $woocommerce, $post,$product;
 	$options = get_option('plugin_options');  
-	$text_to_add_1 = $options['add_text_area_1'];
-	$text_to_add_2 = $options['add_text_area_2'];
-	if (get_post_meta($product->id,'add_text_checkbox', true)) {
-	echo '<div class="wcata">' . $text_to_add_2 . '</div>';
- } else {
-	echo '<div class="wcata">' . $text_to_add_1 . '</div>';
+	$text_to_add_1 = $options['add_text_area_1'];  // 7-10 days
+	$text_to_add_2 = $options['add_text_area_2']; // 72 hours
+			if ((get_post_meta($product->id,'add_alt_text_checkbox', true)) == 'yes') {
+			echo '<div class="wcata">' . $text_to_add_1 . '</div>';
+		 } elseif ((get_post_meta($product->id,'add_text_checkbox', true)) == 'yes') {
+			echo '<div class="wcata">' . $text_to_add_2 . '</div>';
+		 } else {
+			// do nothing :) 
+		 }
+ 
  }
- }
- 
- add_action( 'woocommerce_single_product_summary', 'wc_add_text_after_atc_button', 35 );
- 
- 
+  
 // Display Fields
 add_action( 'woocommerce_product_options_general_product_data', 'woo_add_custom_general_fields' );
-// Save Fields
-add_action( 'woocommerce_process_product_meta', 'woo_add_custom_general_fields_save' );  
  function woo_add_custom_general_fields() {
  global $woocommerce, $post;
 echo '<div class="options_group">';
@@ -112,10 +113,24 @@ echo '<div class="options_group">';
 		'description' => __( 'Check me!', 'woocommerce' )
 		)
 	); 
+		// Checkbox
+	woocommerce_wp_checkbox(
+		array(
+		'id' => 'add_alt_text_checkbox',
+		'wrapper_class' => '',
+		'label' => __('72 hour Shipping?', 'woocommerce' ),
+		'description' => __( 'Check me!', 'woocommerce' )
+		)
+	); 
 echo '</div>';
 } 
+
+// Save Fields
+add_action( 'woocommerce_process_product_meta', 'woo_add_custom_general_fields_save' );  
 function woo_add_custom_general_fields_save( $post_id ){
 // Checkbox
-$woocommerce_checkbox = isset( $_POST['_checkbox'] ) ? 'yes' : 'no';
+$woocommerce_checkbox = isset( $_POST['add_text_checkbox'] ) ? 'yes' : 'no';
 update_post_meta( $post_id, 'add_text_checkbox', $woocommerce_checkbox );
+$woocommerce_checkbox = isset( $_POST['add_alt_text_checkbox'] ) ? 'yes' : 'no';
+update_post_meta( $post_id, 'add_alt_text_checkbox', $woocommerce_checkbox );
 }
