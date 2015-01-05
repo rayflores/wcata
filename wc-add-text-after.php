@@ -36,7 +36,8 @@ function register_and_build_fields() {
 	//main section
 	add_settings_section('main_section', 'Main Settings', 'section_cb', __FILE__);
 	// fields in main section
-	add_settings_field('add_text_area', 'Text To Add After Add To Cart Button:', 'add_text_area_setting', __FILE__, 'main_section');
+	add_settings_field('add_text_area_1', 'Text To Add After Add To Cart Button:', 'add_text_area_1_setting', __FILE__, 'main_section');
+	add_settings_field('add_text_area_2', 'Alternative Text To Add After Add To Cart Button:', 'add_text_area_2_setting', __FILE__, 'main_section');
 
 }
 
@@ -68,20 +69,53 @@ function validate_setting($plugin_options) {
 		} return $plugin_options;
 }
 function section_cb() {
-// not needed now //
 }
 
 // zip code box
-function add_text_area_setting() {  
+function add_text_area_1_setting() {  
 	$options = get_option('plugin_options');  
-	echo "<textarea name='plugin_options[add_text_area]' value='{$options['add_text_area']}' cols='50' rows='15'>" . $options['add_text_area'] . "</textarea>";
-
+	echo "<textarea name='plugin_options[add_text_area_1]' value='{$options['add_text_area_1']}' cols='50' rows='15'>" . $options['add_text_area_1'] . "</textarea>";
+}
+function add_text_area_2_setting() {  
+	$options = get_option('plugin_options');  
+	echo "<textarea name='plugin_options[add_text_area_2]' value='{$options['add_text_area_2']}' cols='50' rows='15'>" . $options['add_text_area_2'] . "</textarea>";
 }
  
  function wc_add_text_after_atc_button(){
+ global $woocommerce, $post,$product;
 	$options = get_option('plugin_options');  
-	$text_to_add = $options['add_text_area'];
-	echo '<div class="wcata">' . $text_to_add . '</div>';
+	$text_to_add_1 = $options['add_text_area_1'];
+	$text_to_add_2 = $options['add_text_area_2'];
+	if (get_post_meta($product->id,'add_text_checkbox', true)) {
+	echo '<div class="wcata">' . $text_to_add_2 . '</div>';
+ } else {
+	echo '<div class="wcata">' . $text_to_add_1 . '</div>';
+ }
  }
  
- add_action( 'woocommerce_single_product_summary', 'wc_add_text_after_atc_button', 35 ); // immediately after atc button
+ add_action( 'woocommerce_single_product_summary', 'wc_add_text_after_atc_button', 35 );
+ 
+ 
+// Display Fields
+add_action( 'woocommerce_product_options_general_product_data', 'woo_add_custom_general_fields' );
+// Save Fields
+add_action( 'woocommerce_process_product_meta', 'woo_add_custom_general_fields_save' );  
+ function woo_add_custom_general_fields() {
+ global $woocommerce, $post;
+echo '<div class="options_group">';
+	// Checkbox
+	woocommerce_wp_checkbox(
+		array(
+		'id' => 'add_text_checkbox',
+		'wrapper_class' => '',
+		'label' => __('7-10 Days Shipping?', 'woocommerce' ),
+		'description' => __( 'Check me!', 'woocommerce' )
+		)
+	); 
+echo '</div>';
+} 
+function woo_add_custom_general_fields_save( $post_id ){
+// Checkbox
+$woocommerce_checkbox = isset( $_POST['_checkbox'] ) ? 'yes' : 'no';
+update_post_meta( $post_id, 'add_text_checkbox', $woocommerce_checkbox );
+}
