@@ -78,14 +78,14 @@ function section_cb() {
 // $text_to_add_1 box
 function add_text_area_1_setting() {  
 	$options = get_option('plugin_options'); 
-	$ta1 = (isset($options['add_text_area_1']));
+	$ta1 = $options['add_text_area_1'];
 	echo "<textarea name='plugin_options[add_text_area_1]' value='{$ta1}' cols='50' rows='15'>" . $ta1 . "</textarea>";
 }
 
 // $text_to_add_2 box
 function add_text_area_2_setting() {  
 	$options = get_option('plugin_options'); 
-	$ta2 = (isset($options['add_text_area_2']));	
+	$ta2 = $options['add_text_area_2'];	
 	echo "<textarea name='plugin_options[add_text_area_2]' value='{$ta2}' cols='50' rows='15'>" . $ta2 . "</textarea>";
 }
 
@@ -114,7 +114,7 @@ echo '<div class="options_group">';
 	// Checkbox
 	woocommerce_wp_checkbox(
 		array(
-		'id' => 'add_text_checkbox',
+		'id' => 'add_text_area_1',
 		'wrapper_class' => '',
 		'label' => __('7-10 Days Shipping?', 'woocommerce' ),
 		'description' => __( 'Check me!', 'woocommerce' )
@@ -123,7 +123,7 @@ echo '<div class="options_group">';
 		// Checkbox
 	woocommerce_wp_checkbox(
 		array(
-		'id' => 'add_alt_text_checkbox',
+		'id' => 'add_text_area_2',
 		'wrapper_class' => '',
 		'label' => __('72 hour Shipping?', 'woocommerce' ),
 		'description' => __( 'Check me!', 'woocommerce' )
@@ -136,9 +136,9 @@ echo '</div>';
 add_action( 'woocommerce_process_product_meta', 'woo_add_custom_general_fields_save' );  
 function woo_add_custom_general_fields_save( $post_id ){
 // Checkbox
-$woocommerce_checkbox = isset( $_POST['add_text_checkbox'] ) ? 'yes' : 'no';
-update_post_meta( $post_id, 'add_text_checkbox', $woocommerce_checkbox );
-$woocommerce_checkbox = isset( $_POST['add_alt_text_checkbox'] ) ? 'yes' : 'no';
-update_post_meta( $post_id, 'add_alt_text_checkbox', $woocommerce_checkbox );
+$woocommerce_checkbox = isset( $_POST['add_text_area_1'] ) ? 'yes' : 'no';
+update_post_meta( $post_id, 'add_text_area_1', $woocommerce_checkbox );
+$woocommerce_checkbox = isset( $_POST['add_text_area_2'] ) ? 'yes' : 'no';
+update_post_meta( $post_id, 'add_text_area_2', $woocommerce_checkbox );
 }
 }  // end wc check active
