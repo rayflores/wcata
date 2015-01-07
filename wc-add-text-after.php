@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Add text after "Add To Cart" button
  * Plugin URI: http://www.rayflores.com/plugins/wc-text-after-atc-button 
@@ -9,7 +10,11 @@
  * Requires at least: 4.0
  * Tested up to: 4.1
  */
- 
+/**
+ * Check if WooCommerce is active
+ **/
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) { 
+
 add_action('admin_menu', 'create_options_page');
 function create_options_page() {  
 	add_menu_page('Add Text', 'Add Text', 'administrator', 'wc_add_text_after', 'wc_add_text_after_options_page');
@@ -72,14 +77,16 @@ function section_cb() {
 
 // $text_to_add_1 box
 function add_text_area_1_setting() {  
-	$options = get_option('plugin_options');  
-	echo "<textarea name='plugin_options[add_text_area_1]' value='{$options['add_text_area_1']}' cols='50' rows='15'>" . $options['add_text_area_1'] . "</textarea>";
+	$options = get_option('plugin_options'); 
+	$ta1 = (isset($options['add_text_area_1']));
+	echo "<textarea name='plugin_options[add_text_area_1]' value='{$ta1}' cols='50' rows='15'>" . $ta1 . "</textarea>";
 }
 
 // $text_to_add_2 box
 function add_text_area_2_setting() {  
-	$options = get_option('plugin_options');  
-	echo "<textarea name='plugin_options[add_text_area_2]' value='{$options['add_text_area_2']}' cols='50' rows='15'>" . $options['add_text_area_2'] . "</textarea>";
+	$options = get_option('plugin_options'); 
+	$ta2 = (isset($options['add_text_area_2']));	
+	echo "<textarea name='plugin_options[add_text_area_2]' value='{$ta2}' cols='50' rows='15'>" . $ta2 . "</textarea>";
 }
 
 // show text after add-to-cart-button @priority 35
@@ -134,3 +141,4 @@ update_post_meta( $post_id, 'add_text_checkbox', $woocommerce_checkbox );
 $woocommerce_checkbox = isset( $_POST['add_alt_text_checkbox'] ) ? 'yes' : 'no';
 update_post_meta( $post_id, 'add_alt_text_checkbox', $woocommerce_checkbox );
 }
+}  // end wc check active
